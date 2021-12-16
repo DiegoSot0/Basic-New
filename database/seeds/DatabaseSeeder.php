@@ -14,11 +14,11 @@ class DatabaseSeeder extends Seeder
         // $this->call(UsersTableSeeder::class);
 
         App\User::create([
-            'name' => 'Italo Morales F',
-            'email' => 'i@admin.com',
+            'name' => 'Diego Soto M',
+            'email' => 'd@admin.com',
             'password' => bcrypt('123456')
         ]);
 
-        factory(App\Post::class, 24)->create();
+        factory(App\Post::class, 25)->create();
     }
 }
