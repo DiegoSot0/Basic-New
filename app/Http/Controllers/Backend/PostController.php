@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Post;
 use App\Http\Requests\PostRequest;
-
+use Illuminate\Support\Facades\Storage;
 class PostController extends Controller
 {
     /**
@@ -42,23 +42,12 @@ class PostController extends Controller
             'user_id' => auth()->user()->id //esta fila sacamos el id que es del que esta logeado
         ] + $request->all()); //traemos todo los datos que enviamos del formulario
         //imagen
-            if($request->file('file')){
-                $post->file=$request->file('file')->store('posts','public'); // hace que guarde en un url cuyo url es storage/public/posts/ 
-                $post->save();
-            }
+        if ($request->file('file')) {
+            $post->file = $request->file('file')->store('posts', 'public'); // hace que guarde en un url cuyo url es storage/public/posts/ 
+            $post->save();
+        }
         //retornar
-        return back()->with('status','Creado con éxito');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Post $post)
-    {
-        //
+        return back()->with('status', 'Creado con éxito');
     }
 
     /**
@@ -69,7 +58,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return view('posts/edit', compact('post'));
     }
 
     /**
@@ -79,9 +68,16 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(PostRequest $request, Post $post)
     {
-        //
+        $post->update($request->all());
+        //eliminar imagen
+        if ($request->file('file')) {
+            Storage::disk('public')->delete($post->file);
+            $post->file = $request->file('file')->store('posts', 'public'); // hace que guarde en un url cuyo url es storage/public/posts/ 
+            $post->save();
+        }
+        return back()->with('status', 'Actualizado con éxito'); 
     }
 
     /**
@@ -92,6 +88,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        //Eliminacion imagen 
+        $post->delete();
+        return back()->with('status', 'Eliminado con éxito');
     }
 }
