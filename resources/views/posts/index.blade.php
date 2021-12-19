@@ -37,10 +37,8 @@
                                             <form method="{{ route('posts.destroy', $post) }}" action="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <input type="submit"
-                                                value="Eliminar"
-                                                class="btn btn-danger btn-sm"
-                                                onclick="return confirm('¿Desea eliminar...?')">
+                                                <input type="submit" value="Eliminar" class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('¿Desea eliminar...?')">
                                             </form>
                                         </td>
                                     </tr>

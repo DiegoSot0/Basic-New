@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Post;
-use Illuminate\Http\Request;
+use App\Http\Requests\PostRequest;
 
 class PostController extends Controller
 {
@@ -16,7 +16,7 @@ class PostController extends Controller
     public function index()
     {
         $posts =  Post::latest()->get();
-        return view('posts.index',compact('posts'));
+        return view('posts.index', compact('posts'));
     }
 
     /**
@@ -35,9 +35,19 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        //
+        //salvar o guardar
+        $post = Post::create([
+            'user_id' => auth()->user()->id //esta fila sacamos el id que es del que esta logeado
+        ] + $request->all()); //traemos todo los datos que enviamos del formulario
+        //imagen
+            if($request->file('file')){
+                $post->file=$request->file('file')->store('posts','public'); // hace que guarde en un url cuyo url es storage/public/posts/ 
+                $post->save();
+            }
+        //retornar
+        return back()->with('status','Creado con éxito');
     }
 
     /**
