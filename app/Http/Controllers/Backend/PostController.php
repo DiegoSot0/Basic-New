@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Post;
 use App\Http\Requests\PostRequest;
 use Illuminate\Support\Facades\Storage;
+
 class PostController extends Controller
 {
     /**
@@ -37,13 +38,16 @@ class PostController extends Controller
      */
     public function store(PostRequest $request)
     {
+
+        // revisamos como llegan los datos desde el formulario
+        // dd($request->all());
         //salvar o guardar
         $post = Post::create([
             'user_id' => auth()->user()->id //esta fila sacamos el id que es del que esta logeado
         ] + $request->all()); //traemos todo los datos que enviamos del formulario
         //imagen
         if ($request->file('file')) {
-            $post->file = $request->file('file')->store('posts', 'public'); // hace que guarde en un url cuyo url es storage/public/posts/ 
+            $post->image = $request->file('file')->store('posts', 'public'); // hace que guarde en un url cuyo url es storage/public/posts/ 
             $post->save();
         }
         //retornar
@@ -70,14 +74,15 @@ class PostController extends Controller
      */
     public function update(PostRequest $request, Post $post)
     {
+
         $post->update($request->all());
         //eliminar imagen
         if ($request->file('file')) {
             Storage::disk('public')->delete($post->file);
-            $post->file = $request->file('file')->store('posts', 'public'); // hace que guarde en un url cuyo url es storage/public/posts/ 
+            $post->image = $request->file('file')->store('posts', 'public'); // hace que guarde en un url cuyo url es storage/public/posts/ 
             $post->save();
         }
-        return back()->with('status', 'Actualizado con éxito'); 
+        return back()->with('status', 'Actualizado con éxito');
     }
 
     /**
@@ -88,7 +93,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //Eliminacion imagen 
+        Storage::disk('public')->delete($post->file);
         $post->delete();
         return back()->with('status', 'Eliminado con éxito');
     }

@@ -21,7 +21,7 @@ class CreatePostsTable extends Migration
             $table->string('title');
             $table->string('slug')->unique();
 
-            $table->string('file')->nullable();
+            $table->string('image')->nullable();
 
             $table->text('body');
             $table->text('iframe')->nullable();
